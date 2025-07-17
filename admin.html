@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - User Approval</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+  <h2 class="text-3xl font-bold mb-6">Pending User Registrations</h2>
+  <div id="userList" class="space-y-4"></div>
+  <script>
+    
+    async function fetchUsers() {
+  const res = await fetch('http://localhost:4000/users');
+  const users = await res.json();
+  const userList = document.getElementById('userList');
+  userList.innerHTML = '';
+  if (users.length === 0) {
+    userList.innerHTML = '<div class="p-4 bg-green-100 text-green-700 rounded">No users!</div>';
+    return;
+  }
+  users.forEach(u => {
+    let statusColor = "gray-400";
+    if (u.status === "Approved") statusColor = "green-600";
+    else if (u.status === "Rejected") statusColor = "red-600";
+    else if (u.status === "Pending") statusColor = "yellow-600";
+    div = document.createElement('div');
+    div.className = 'p-4 bg-white rounded shadow flex flex-col md:flex-row items-center md:items-end md:justify-between';
+    div.innerHTML = `
+      <div>
+        <div class="font-bold text-lg">${u.fullName || ''} <span class="text-gray-500">(${u.username})</span></div>
+        <div class="text-sm text-gray-600">${u.email}</div>
+        <div class="mt-1 text-sm font-semibold text-${statusColor}">Status: ${u.status || (u.approved ? "Approved" : "Pending")}</div>
+      </div>
+      <div class="mt-3 md:mt-0 flex space-x-2">
+        ${u.status === "Pending" ? `
+          <button class="approveBtn bg-green-600 text-white px-4 py-2 rounded" data-username="${u.username}">Approve</button>
+          <button class="rejectBtn bg-red-600 text-white px-4 py-2 rounded" data-username="${u.username}">Reject</button>
+        ` : ""}
+      </div>
+    `;
+    userList.appendChild(div);
+  });
+
+  // Attach handlers for only pending users
+  document.querySelectorAll('.approveBtn').forEach(btn => {
+    btn.onclick = async () => {
+      await fetch(`http://localhost:4000/approve/${btn.dataset.username}`);
+      fetchUsers();
+    };
+  });
+  document.querySelectorAll('.rejectBtn').forEach(btn => {
+    btn.onclick = async () => {
+      if (confirm('Are you sure you want to reject this user?')) {
+        await fetch(`http://localhost:4000/reject/${btn.dataset.username}`);
+        fetchUsers();
+      }
+    };
+  });
+}
+fetchUsers();
+
+
+  </script>
+</body>
+</html>
+
+<script>
+  fetch('http://localhost:4000/users')
+    .then(r => r.json())
+    .then(data => { console.log("Users:", data); })
+    .catch(e => { console.log("ERROR:", e); });
+</script>

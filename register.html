@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register - Family Tree</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="bg-white shadow-lg rounded-2xl p-8 max-w-md w-full">
+    <div class="mb-6 text-center">
+      <h2 class="text-3xl font-bold">Create Account</h2>
+    </div>
+    <form id="registerForm" autocomplete="off">
+      <div class="mb-4">
+        <label class="block text-lg font-medium mb-1">Full Name</label>
+        <input type="text" id="registerName" class="w-full p-3 border rounded-xl text-base" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-lg font-medium mb-1">Username</label>
+        <input type="text" id="registerUsername" class="w-full p-3 border rounded-xl text-base" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-lg font-medium mb-1">Email</label>
+        <input type="email" id="registerEmail" class="w-full p-3 border rounded-xl text-base" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-lg font-medium mb-1">Password</label>
+        <input type="password" id="registerPassword" class="w-full p-3 border rounded-xl text-base" required>
+      </div>
+      <div id="registerMsg" class="mb-2 text-center"></div>
+      <button type="submit" class="w-full py-3 bg-green-700 text-white text-lg rounded-xl mt-2">Register</button>
+      <div class="text-center mt-3">
+        <a href="login.html" class="text-blue-700 hover:underline text-base">Back to Login</a>
+      </div>
+    </form>
+  </div>
+  <script>
+    document.getElementById('registerForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const data = {
+        fullName: document.getElementById('registerName').value,
+        username: document.getElementById('registerUsername').value,
+        email: document.getElementById('registerEmail').value,
+        password: document.getElementById('registerPassword').value
+      };
+      const msgDiv = document.getElementById('registerMsg');
+      msgDiv.textContent = "Please wait...";
+      msgDiv.className = "mb-2 text-blue-700 text-center";
+      try {
+        const res = await fetch('http://localhost:4000/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const json = await res.json();
+        if (res.ok) {
+          msgDiv.textContent = json.msg;
+          msgDiv.className = "mb-2 text-green-600 text-center";
+          setTimeout(() => window.location.href = 'login.html', 2000);
+        } else {
+          msgDiv.textContent = json.msg || "Registration failed.";
+          msgDiv.className = "mb-2 text-red-600 text-center";
+        }
+      } catch (err) {
+        msgDiv.textContent = "Server error, please try again later.";
+        msgDiv.className = "mb-2 text-red-600 text-center";
+      }
+    }
+  </script>
+</body>
+</html>

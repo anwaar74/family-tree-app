@@ -1,0 +1,34 @@
+[
+  {
+    "username": "Soleh",
+    "email": "anwaar.lukman@gmail.com",
+    "password": "tolo",
+    "fullName": "Mat Tapir",
+    "approved": true,
+    "status": "Approved"
+  },
+  {
+    "username": "tapir",
+    "email": "froche1077@gmail.com",
+    "password": "tapir",
+    "fullName": "Mat Tapir",
+    "approved": true,
+    "status": "Approved"
+  },
+  {
+    "username": "zorab",
+    "email": "anwaar.lukman@gmail.com",
+    "password": "zorab",
+    "fullName": "Zorab",
+    "approved": false,
+    "status": "Rejected"
+  },
+  {
+    "username": "kuluk",
+    "email": "anwaar.lukman@gmail.com",
+    "password": "kuluk",
+    "fullName": "kuluk besar",
+    "approved": true,
+    "status": "Approved"
+  }
+]
